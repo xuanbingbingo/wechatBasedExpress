@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>
+    <%= title %>
+  </title>
+  <link rel='stylesheet' href='/stylesheets/style.css' />
+</head>
+
+<body>
+  <h1>
+    <%= title %>
+  </h1>
+  <p>Welcome to
+    <%= title %>
+  </p>
+  <p>Demo1:</p>
+  <input type="file" id="fileUpload">
+  <button id="submit">点击上传文件</button>
+  <p style="display:none">Demo2:</p>
+  <div id="showUserInfo" style="display:none">
+    <p style="white-space:pre">    name:   <span id="showUserInfoName"></span></p>
+    <p style="white-space:pre">    age:    <span id="showUserInfoAge"></span></p>
+  </div>
+  <button id="getUserInfo" style="display:none">点击查询mongodb数据库中的用户信息</button>
+  <p>Demo3:</p>
+  <div id="showUserInfoMysql" style="display:none">
+    <p style="white-space:pre">    name:    <span id="showUserInfoMysqlName"></span></p>
+    <p style="white-space:pre">    age:    <span id="showUserInfoMysqlPassword"></span></p>
+  </div>
+  <button id="getUserInfoMysql" style="">点击查询mysql数据库中的用户信息</button>
+</body>
+
+</html>
+<script src="javascripts/jquery-3.2.1.min.js"></script>
+<script>
+  //原生ajax请求
+  document.getElementById('getUserInfo').addEventListener('click',function(){
+    getData('http://10.2.60.192:3000/postData','post',{name: 'libin'}).then(function(data){
+      document.getElementById('showUserInfo').style.display = "block";
+      document.getElementById('showUserInfoName').innerHTML = data[0].name;
+      document.getElementById('showUserInfoAge').innerHTML = data[0].age;
+    })
+  });
+  document.getElementById('getUserInfoMysql').addEventListener('click',function(){
+    getData('http://www.duanhaoyu.top/user','post',{name: 'libin'}).then(function(data){
+      document.getElementById('showUserInfoMysql').style.display = "block";
+      document.getElementById('showUserInfoMysqlName').innerHTML = data[0].username;
+      document.getElementById('showUserInfoMysqlPassword').innerHTML = data[0].password;
+    })
+  });
+  function formatParams(data) {
+    var arr = [];
+    for (var name in data) {
+      arr.push(encodeURIComponent(name) + "=" + encodeURIComponent(data[name]));
+    }
+    arr.push(("v=" + Math.random()).replace(".", ""));
+    return arr.join("&");
+  }
+  function getData(url,type,option){
+    return new Promise((resolve,reject)=>{
+      var xhr = new XMLHttpRequest();
+      xhr.open(type, url, true);
+      xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+      xhr.send(formatParams(option));
+      xhr.onreadystatechange = function () {
+        if (xhr.readyState == 4) {
+          if (xhr.status == 200) {
+            console.log(xhr.responseText);
+            let data = JSON.parse(xhr.responseText);
+            resolve(data);
+          }
+        }
+      }
+    })
+  }
+
+
+
+  ////原生ajax上传文件
+  //  document.getElementById('submit').onclick = function(){
+  //    var file = document.getElementById('fileUpload').files[0];
+  //
+  //    var formData = new FormData();
+  //
+  //    formData.append('name','libin');
+  //    formData.append('userFile',file);
+  //
+  //    var oFileBody = '<a id="a"><b id="b">hey!</b></a>'; // Blob对象包含的文件内容
+  //    var oBlob = new Blob([oFileBody], { type: "text/xml"});
+  //
+  //    var oReq = new XMLHttpRequest();
+  //
+  //    oReq.open("POST", "http://localhost:3000/formUpload");
+  //
+  //    // 文件上传过程的回调
+  //    oReq.upload.onprogress = function(e) {
+  //      console.log((e.loaded/e.total)*100+'%')
+  //    }
+  //
+  //    /**
+  //     *   e.loaded 文件已经上传了的大小
+  //     *   e.total  文件总大小
+  //     e.loaded/e.total)*100+'%'  转化成比例；
+  //     */
+  //    // 文件上传完毕的回调
+  //    oReq.upload.onloadend = function(e) {
+  //      console.log('接收完成'+e.loaded+'/'+e.total);
+  //    }
+  //    oReq.send(formData);
+  //  }
+
+
+  // 通过jquery的ajax方法上传文件
+  document.getElementById('submit').onclick = function () {
+    var file = document.getElementById('fileUpload').files[0];
+
+    var formData = new FormData();
+
+    formData.append('name', 'libin');
+    formData.append('userFile', file);
+
+    $.ajax({
+      url: 'http://www.duanhaoyu.top/formUpload',
+      data: formData,
+      contentType: false,
+      processData: false,
+      type: 'POST',
+      success: function (result) {
+        console.log(result);
+      },
+      error: function (err) {
+        console.error(err);
+      }
+    });
+
+  }
+
+</script>
+
+<!--//用express-generator生成器的socket.io实例-->
+<!--<script src="/socket.io/socket.io.js"></script>-->
+<!--<script>-->
+<!--var socket = io.connect('http://localhost:3000');-->
+<!--socket.on('news', function (data) {-->
+<!--console.log(data);-->
+<!--socket.emit('my other event', { my: 'data' });-->
+<!--});-->
+<!--</script>-->

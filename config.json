@@ -1,0 +1,11 @@
+{
+    "token":"hchismylove",
+    "appID":"wxcf7e5a3a6c30da5d",
+    "appScrect":"5496e2ec9e28e561c444793db30602e9",
+    "encodingAESKey":"afPsLj0rV0yGBtZRyWpGWTGFgsrvI40XBCZrnwUURFk",
+    "apiDomain":"https://api.weixin.qq.com/",
+    "apiURL":{
+        "accessTokenApi":"%scgi-bin/token?grant_type=client_credential&appid=%s&secret=%s",
+        "createMenu":"%scgi-bin/menu/create?access_token=%s"
+    }
+}
